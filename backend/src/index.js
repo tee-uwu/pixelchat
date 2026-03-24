@@ -34,19 +34,21 @@ app.use(
         return callback(null, true);
       }
 
-      // Allow production URL
-      if (process.env.NODE_ENV === "production" && origin === process.env.CLIENT_URL) {
+      // Allow any origin in development for mobile testing
+      if (process.env.NODE_ENV !== "production") {
         return callback(null, true);
       }
 
-      // For development, allow all origins
-      if (process.env.NODE_ENV !== "production") {
+      // Allow production URL
+      if (process.env.NODE_ENV === "production" && origin === process.env.CLIENT_URL) {
         return callback(null, true);
       }
 
       return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Cookie'],
   })
 );
 

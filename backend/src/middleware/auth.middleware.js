@@ -3,7 +3,21 @@ import User from "../models/user.model.js";
 
 export const protectRoute = async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
+    // Check multiple places for the token (cookies, headers, etc.)
+    let token = req.cookies.jwt;
+
+    // If not in cookies, check Authorization header
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
+
+    // For development/mobile testing, also check other common places
+    if (!token && process.env.NODE_ENV !== "production") {
+      token = req.headers['x-access-token'] || req.query.token;
+    }
 
     if (!token) {
       return res.status(401).json({ message: "Unauthorized - No Token Provided" });

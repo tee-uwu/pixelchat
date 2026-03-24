@@ -5,11 +5,14 @@ export const generateToken = (userId, res) => {
     expiresIn: "7d",
   });
 
+  // For development/mobile testing, make cookies more permissive
+  const isDevelopment = process.env.NODE_ENV !== "production";
+
   res.cookie("jwt", token, {
     maxAge: 7 * 24 * 60 * 60 * 1000, // MS
-    httpOnly: true,
-    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    secure: process.env.NODE_ENV === "production",
+    httpOnly: !isDevelopment, // Allow JS access in development for mobile testing
+    sameSite: isDevelopment ? "lax" : "none",
+    secure: !isDevelopment,
     path: "/",
   });
 
