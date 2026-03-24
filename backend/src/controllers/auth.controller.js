@@ -94,17 +94,25 @@ export const updateProfile = async (req, res) => {
       return res.status(400).json({ message: "Profile pic is required" });
     }
 
-    const uploadResponse = await cloudinary.uploader.upload(profilePic);
+    let imageUrl = profilePic;
+    if (profilePic.startsWith("data:")) {
+      const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+        folder: "pixelchat/profile_photos",
+      });
+      imageUrl = uploadResponse.secure_url;
+    }
+
     const updatedUser = await User.findByIdAndUpdate(
       userId,
-      { profilePic: uploadResponse.secure_url },
+      { profilePic: imageUrl },
       { new: true }
     );
 
     res.status(200).json(updatedUser);
   } catch (error) {
     console.log("error in update profile:", error);
-    res.status(500).json({ message: "Internal server error" });
+    const message = error?.message || "Internal server error";
+    res.status(500).json({ message });
   }
 };
 
