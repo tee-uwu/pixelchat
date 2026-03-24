@@ -124,3 +124,79 @@ button:hover {
   transition: width 0.3s ease;
   border-right: 2px solid #000;
 }
+
+/* 🔄 Pixel Toggle */
+.pixel-toggle-label {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 30px;
+  cursor: pointer;
+}
+
+.pixel-toggle-input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.pixel-toggle-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ccc;
+  border: 2px solid #000;
+  box-shadow: 2px 2px 0 #000;
+  transition: 0.3s;
+  border-radius: 0;
+}
+
+.pixel-toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;
+  width: 22px;
+  left: 2px;
+  bottom: 2px;
+  background: #fff;
+  border: 1px solid #000;
+  box-shadow: 1px 1px 0 #000;
+  transition: 0.3s;
+  border-radius: 0;
+}
+
+.pixel-toggle-input:checked + .pixel-toggle-slider {
+  background: var(--pixel-blue);
+}
+
+.pixel-toggle-input:checked + .pixel-toggle-slider:before {
+  transform: translateX(28px);
+}
+
+.pixel-toggle-text {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  transition: opacity 0.3s;
+}
+
+.pixel-toggle-text.night {
+  left: 4px;
+  opacity: 1;
+}
+
+.pixel-toggle-text.wireframe {
+  right: 4px;
+  opacity: 0;
+}
+
+.pixel-toggle-input:checked + .pixel-toggle-slider .pixel-toggle-text.night {
+  opacity: 0;
+}
+
+.pixel-toggle-input:checked + .pixel-toggle-slider .pixel-toggle-text.wireframe {
+  opacity: 1;
+}

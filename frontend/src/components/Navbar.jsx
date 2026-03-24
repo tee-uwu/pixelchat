@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { useThemeStore } from "../store/useThemeStore";
-import { LogOut, MessageSquare, Settings, User, Palette } from "lucide-react";
+import { LogOut, MessageSquare, Settings, User } from "lucide-react";
+import PixelToggle from "./PixelToggle";
 
 const Navbar = () => {
   const { logout, authUser } = useAuthStore();
-  const { theme, toggleTheme } = useThemeStore();
 
   return (
     <header
@@ -24,14 +24,7 @@ const Navbar = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={toggleTheme}
-              className="btn btn-sm gap-2"
-              title={`Switch to ${theme === "night" ? "Wireframe" : "Night"} theme`}
-            >
-              <Palette className="w-4 h-4" />
-              <span className="hidden sm:inline">{theme === "night" ? "Wireframe" : "Night"}</span>
-            </button>
+            <PixelToggle />
 
             <Link
               to={"/settings"}
