@@ -94,6 +94,10 @@ export const updateProfile = async (req, res) => {
       return res.status(400).json({ message: "Profile pic is required" });
     }
 
+    if (!process.env.CLOUDINARY_CLOUD_NAME || !process.env.CLOUDINARY_API_KEY || !process.env.CLOUDINARY_API_SECRET) {
+      return res.status(500).json({ message: "Cloudinary is not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET." });
+    }
+
     let imageUrl = profilePic;
     if (profilePic.startsWith("data:")) {
       const uploadResponse = await cloudinary.uploader.upload(profilePic, {
@@ -111,7 +115,7 @@ export const updateProfile = async (req, res) => {
     res.status(200).json(updatedUser);
   } catch (error) {
     console.log("error in update profile:", error);
-    const message = error?.message || "Internal server error";
+    const message = error?.response?.data?.message || error?.message || "Internal server error";
     res.status(500).json({ message });
   }
 };
