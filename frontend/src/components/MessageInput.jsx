@@ -1,13 +1,34 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useChatStore } from "../store/useChatStore";
 import { Image, Send, X } from "lucide-react";
 import toast from "react-hot-toast";
+import PixelLoadingBar from "./PixelLoadingBar";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
+  const [progress, setProgress] = useState(0);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage, isSendingMessage } = useChatStore();
+
+  useEffect(() => {
+    if (isSendingMessage) {
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 100);
+      return () => clearInterval(interval);
+    } else {
+      setProgress(100);
+      setTimeout(() => setProgress(0), 500);
+    }
+  }, [isSendingMessage]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -48,7 +69,7 @@ const MessageInput = () => {
   };
 
   return (
-    <div className="p-4 w-full">
+    <div className="p-4 w-full pixel-box">
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
@@ -66,6 +87,12 @@ const MessageInput = () => {
               <X className="size-3" />
             </button>
           </div>
+        </div>
+      )}
+
+      {isSendingMessage && (
+        <div className="mb-3">
+          <PixelLoadingBar progress={progress} />
         </div>
       )}
 
